@@ -1,6 +1,6 @@
 const express = require("express");
 const db = require("./db");
-const { User, Game, Platform } = require("./models");
+const { User, Game, Platform, Genres } = require("./models");
 const PORT = 3001;
 const server = express();
 
