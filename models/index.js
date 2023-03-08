@@ -5,5 +5,15 @@ const Genres = require("./Genres");
 const Tag = require("./Tag");
 const Developer = require("./Developer");
 const Library = require("./Library");
+const Transaction = require("./Transaction");
 
-module.exports = { User, Game, Platform, Genres, Tag, Developer, Library };
+module.exports = {
+  User,
+  Game,
+  Platform,
+  Genres,
+  Tag,
+  Developer,
+  Library,
+  Transaction,
+};
