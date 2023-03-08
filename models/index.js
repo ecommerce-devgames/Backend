@@ -8,6 +8,11 @@ const Library = require("./Library");
 const Transaction = require("./Transaction");
 const Cart = require("./Cart");
 
+Cart.belongsTo(User);
+User.hasOne(Cart);
+Game.belongsToMany(Cart, { through: "cartItem" });
+Cart.belongsToMany(Game, { through: "cartItem" });
+
 module.exports = {
   User,
   Game,
