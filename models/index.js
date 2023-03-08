@@ -6,6 +6,7 @@ const Tag = require("./Tag");
 const Developer = require("./Developer");
 const Library = require("./Library");
 const Transaction = require("./Transaction");
+const Cart = require("./Cart");
 
 module.exports = {
   User,
@@ -16,4 +17,5 @@ module.exports = {
   Developer,
   Library,
   Transaction,
+  Cart,
 };

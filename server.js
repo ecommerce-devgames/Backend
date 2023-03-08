@@ -10,6 +10,7 @@ const {
   Developer,
   Library,
   Transaction,
+  Cart,
 } = require("./models");
 
 const PORT = 3001;
