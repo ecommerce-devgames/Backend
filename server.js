@@ -11,6 +11,8 @@ const {
   Tag,
   Developer,
   Library,
+  Transaction,
+  Cart,
 } = require("./models");
 
 const PORT = 3001;
@@ -23,6 +25,7 @@ server.use("/api", routes);
 
 db.sync({ force: false }).then(() => {
   console.log("Data Base Connect");
+
   server.listen(PORT, () => {
     console.log("Server listening at port: " + PORT);
   });
