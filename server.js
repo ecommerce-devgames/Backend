@@ -10,7 +10,6 @@ const {
   Genres,
   Tag,
   Developer,
-  Transaction,
   Cart,
 } = require("./models");
 
