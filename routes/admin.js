@@ -14,7 +14,7 @@ router.get ("/all", (req, res) => {
 
 router.put ("/access", (req, res) => {
 
-	User.update (
+	User.update ( 
 		
 		{ isAdmin: fn ("NOT", col ("isAdmin")) }, 
 		{ where: { id: req.body.id }, returning: true }
