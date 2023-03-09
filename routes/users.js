@@ -19,7 +19,7 @@ router.post("/register", (req, res, next) => {
       if (created) res.sendStatus(201);
       else res.sendStatus(403);
     })
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 router.post("/login", (req, res, next) => {
@@ -47,7 +47,7 @@ router.post("/login", (req, res, next) => {
           res.cookie("token", token).send(payload);
         });
     })
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 router.get("/me", validateToken, (req, res, next) => {
@@ -72,7 +72,7 @@ router.put("/me/edit", validateToken, (req, res, next) => {
 
       res.cookie("token", token).send(payload);
     })
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 router.post("/logout", (req, res) => {
@@ -84,7 +84,7 @@ router.get("/admin/all", validateToken, (req, res, next) => {
   User.findAll()
 
     .then((users) => res.send(users))
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 router.put("/admin/access", validateToken, (req, res, next) => {
@@ -94,14 +94,14 @@ router.put("/admin/access", validateToken, (req, res, next) => {
     { where: { id: req.body.id }, returning: true }
   )
     .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
   User.destroy({ where: { id: req.params.id } })
     .then(() => res.sendStatus(204))
-    .catch(() => next());
+    .catch (err => next (err));
 });
 
 module.exports = router;
