@@ -34,11 +34,31 @@ Game.init(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    slug: {
+
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   },
   {
     sequelize: db,
     modelName: "game",
   }
 );
+
+Game.addHook ("beforeValidate", game => {
+
+    if (game.name) game.name = game.name.trim ();
+});
+
+Game.beforeValidate((game) => {
+
+  if (game.name) game.slug = game.name.trim().toLowerCase ().replace(/\s+/g, "_").replace(/\W/g, "");
+});
+
+Game.addHook (("beforeUpdate"), game => {
+  
+  game.slug = game.name.trim().toLowerCase ().replace(/\s+/g, "_").replace(/\W/g, "");
+});
 
 module.exports = Game;
