@@ -1,89 +1,80 @@
-const { Model, DataTypes } = require ("sequelize");
-const bcrypt = require ("bcrypt");
+const { Model, DataTypes } = require("sequelize");
+const bcrypt = require("bcrypt");
 
-const db = require ("../db");
+const db = require("../db");
 
 class User extends Model {
-	
-	hash (password, hash) {
+  hash(password, hash) {
+    return bcrypt.hash(password, hash);
+  }
 
-		return bcrypt.hash (password, hash);
-	}
-
-	validatePassword (password) {
-
-		return this.hash (password, this.salt)
-		
-			.then (hash => hash === this.password);
-	}
+  validatePassword(password) {
+    return this.hash(password, this.salt).then(
+      (hash) => hash === this.password
+    );
+  }
 }
 
-User.init ({
+User.init(
+  {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
 
-	name: {
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
 
-		type: DataTypes.STRING,
-		allowNull: false
-	},
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
 
-	lastName: {
+      validate: {
+        isEmail: true,
+      },
+    },
 
-		type: DataTypes.STRING,
-		allowNull: false
-	},
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
 
-	email: {
+    salt: {
+      type: DataTypes.STRING,
+    },
 
-		type: DataTypes.STRING,
-		allowNull: false,
-		
-		validate: {
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
+    sequelize: db,
+    modelName: "user",
+    timestamps: false,
+  }
+);
 
-			isEmail: true
-		}
-	},
+User.addHook("beforeCreate", (user) => {
+  user.salt = bcrypt.genSaltSync(8);
 
-	password: {
+  return user
+    .hash(user.password, user.salt)
 
-		type: DataTypes.STRING,
-		allowNull: false
-	},
-
-	salt: {
-
-		type: DataTypes.STRING
-	},
-
-	isAdmin: {
-
-		type: DataTypes.BOOLEAN,
-		defaultValue: false
-	}
-}, { 
-	
-	sequelize: db, 
-	modelName: "user" 
+    .then((hash) => (user.password = hash));
 });
 
-User.addHook ("beforeCreate", user => {
+User.addHook("beforeUpdate", (user) => {
+  if (user.changed("password")) {
+    user.salt = bcrypt.genSaltSync(8);
 
-	user.salt = bcrypt.genSaltSync (8);
+    return user
+      .hash(user.password, user.salt)
 
-	return user.hash (user.password, user.salt)
-		
-		.then (hash => user.password = hash);
-});
-
-User.addHook ("beforeUpdate", user => {
-
-	if (user.changed ("password")) {
-
-		user.salt = bcrypt.genSaltSync (8);
-
-		return user.hash (user.password, user.salt)
-
-			.then (hash => user.password = hash);
-	}
+      .then((hash) => (user.password = hash));
+  }
 });
 
 module.exports = User;

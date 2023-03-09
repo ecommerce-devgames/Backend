@@ -1,18 +1,17 @@
-const { verifyToken } = require ("../utils/token");
+const { verifyToken } = require("../utils/token");
 
 const validateToken = (req, res, next) => {
+  const token = req.cookies.token;
 
-	const token = req.cookies.token;
+  if (!token) return res.sendStatus(401);
 
-	if (!token) return res.sendStatus (401);
+  const user = verifyToken(token);
 
-	const user = verifyToken (token);
+  if (!user) return res.sendStatus(401);
 
-	if (!user) return res.sendStatus (401);
+  req.user = user;
 
-	req.user = user;
+  next();
+};
 
-	next ();
-}
-
-module.exports = { validateToken } 
+module.exports = { validateToken };
