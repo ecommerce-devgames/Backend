@@ -4,7 +4,6 @@ const Platform = require("./Platform");
 const Genres = require("./Genres");
 const Tag = require("./Tag");
 const Developer = require("./Developer");
-const Transaction = require("./Transaction");
 const Cart = require("./Cart");
 
 // Relationship Cart-User
@@ -42,6 +41,5 @@ module.exports = {
   Genres,
   Tag,
   Developer,
-  Transaction,
   Cart,
 };
