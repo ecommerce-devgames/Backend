@@ -97,9 +97,9 @@ router.put("/admin/access", validateToken, (req, res, next) => {
     .catch(() => next());
 });
 
-router.delete("/admin/delete", validateToken, (req, res, next) => {
+router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
-  User.destroy({ where: { email: req.body.email } })
+  User.destroy({ where: { id: req.params.id } })
     .then(() => res.sendStatus(204))
     .catch(() => next());
 });
