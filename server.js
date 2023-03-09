@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("./db");
 const routes = require("./routes");
 const cookieParser = require("cookie-parser");
+var cors = require("cors");
 
 const {
   User,
@@ -16,6 +17,13 @@ const {
 const PORT = 3001;
 const server = express();
 
+const corsOptions = {
+  credentials: true,
+  origin: "http://localhost:3000",
+  ///..other options
+};
+
+server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
 
