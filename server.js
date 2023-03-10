@@ -29,13 +29,12 @@ server.use(cookieParser());
 
 server.use("/api", routes);
 
-server.use ("/api", (req, res) => res.sendStatus(404));
+server.use("/api", (req, res) => res.sendStatus(404));
 
-server.use ((err, req, res, next) => {
-
-  console.error (err);
-  res.status (500).send (err.message);
-})
+server.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send(err.message);
+});
 
 db.sync({ force: false }).then(() => {
   console.log("Data Base Connect");
