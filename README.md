@@ -39,6 +39,17 @@ We put the server online in the port 3001 and it`s ready to recieve requests.
 http://localhost:3001/
 ```
 
+Link to Schema Design
+
+```
+https://dbdiagram.io/d/6408a718296d97641d866bcf
+```
+
+API Documentation
+
+```
+https://documenter.getpostman.com/view/25419703/2s93JtP3Yg
+```
 
 
 
