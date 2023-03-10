@@ -1,22 +1,19 @@
 const express = require("express");
+const { fn, col } = require("sequelize");
 const { User } = require("../models");
 const { generateToken } = require("../utils/token");
 const { validateToken } = require("../middleware/validateToken");
-const { fn, col } = require("sequelize");
 
 const router = express.Router();
 
 router.post("/register", (req, res, next) => {
-  let { name, lastName, email, password } = req.body;
-  User.findOrCreate({
+  const [isAdmin, ...data] = req.body;
+  return User.findOrCreate({
     where: {
       email,
     },
     defaults: {
-      name,
-      lastName,
-      email,
-      password,
+      ...data,
     },
   })
     .then(([user, created]) => {
@@ -27,29 +24,22 @@ router.post("/register", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-  let { email, password } = req.body;
+  const { email, password } = req.body;
 
-  User.findOne({ where: { email } })
-
+  return User.findOne({ where: { email } })
     .then((user) => {
-      user
-        .validatePassword(password)
-
-        .then((validation) => {
-          if (!validation) return res.sendStatus(401);
-
-          const payload = {
-            id: user.id,
-            name: user.name,
-            lastName: user.lastName,
-            email: user.email,
-            isAdmin: user.isAdmin,
-          };
-
-          const token = generateToken(payload);
-
-          res.cookie("token", token).send(payload);
-        });
+      user.validatePassword(password).then((validation) => {
+        if (!validation) return res.sendStatus(401);
+        const payload = {
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+          isAdmin: user.isAdmin,
+        };
+        const token = generateToken(payload);
+        res.cookie("token", token).send(payload);
+      });
     })
     .catch((err) => next(err));
 });
@@ -59,8 +49,7 @@ router.get("/me", validateToken, (req, res, next) => {
 });
 
 router.put("/me/edit", validateToken, (req, res, next) => {
-  User.findOne({ where: { email: req.user.email } })
-
+  return User.findOne({ where: { email: req.user.email } })
     .then((user) =>
       User.update(
         { ...req.body },
@@ -84,18 +73,17 @@ router.post("/logout", (req, res) => {
 
 router.get("/admin/all", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
-  User.findAll()
+  return User.findAll()
 
     .then((users) => res.send(users))
     .catch((err) => next(err));
 });
 
-router.put("/admin/access", validateToken, (req, res, next) => {
-  // Cambiar a params
+router.put("/admin/access/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
-  User.update(
+  return User.update(
     { isAdmin: fn("NOT", col("isAdmin")) },
-    { where: { id: req.body.id }, returning: true }
+    { where: { id: req.params.id }, returning: true }
   )
     .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
     .catch((err) => next(err));
@@ -103,7 +91,7 @@ router.put("/admin/access", validateToken, (req, res, next) => {
 
 router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
-  User.destroy({ where: { id: req.params.id } })
+  return User.destroy({ where: { id: req.params.id } })
     .then(() => res.sendStatus(204))
     .catch((err) => next(err));
 });
