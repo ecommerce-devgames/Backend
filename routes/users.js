@@ -7,19 +7,23 @@ const { fn, col } = require("sequelize");
 const router = express.Router();
 
 router.post("/register", (req, res, next) => {
+  let { name, lastName, email, password } = req.body;
   User.findOrCreate({
     where: {
-      email: req.body.email,
+      email,
     },
     defaults: {
-      ...req.body,
+      name,
+      lastName,
+      email,
+      password,
     },
   })
     .then(([user, created]) => {
       if (created) res.sendStatus(201);
       else res.sendStatus(403);
     })
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 router.post("/login", (req, res, next) => {
@@ -47,12 +51,10 @@ router.post("/login", (req, res, next) => {
           res.cookie("token", token).send(payload);
         });
     })
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 router.get("/me", validateToken, (req, res, next) => {
-  //const { name, lastName, email, isAdmin } = req.user;
-  //const user = { name, lastName, email, isAdmin };
   res.send(req.user);
 });
 
@@ -72,7 +74,7 @@ router.put("/me/edit", validateToken, (req, res, next) => {
 
       res.cookie("token", token).send(payload);
     })
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 router.post("/logout", (req, res) => {
@@ -84,7 +86,7 @@ router.get("/admin/all", validateToken, (req, res, next) => {
   User.findAll()
 
     .then((users) => res.send(users))
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 router.put("/admin/access", validateToken, (req, res, next) => {
@@ -94,14 +96,14 @@ router.put("/admin/access", validateToken, (req, res, next) => {
     { where: { id: req.body.id }, returning: true }
   )
     .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
   User.destroy({ where: { id: req.params.id } })
     .then(() => res.sendStatus(204))
-    .catch (err => next (err));
+    .catch((err) => next(err));
 });
 
 module.exports = router;
