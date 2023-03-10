@@ -1,8 +1,10 @@
 const express = require("express");
-const db = require("./db");
-const routes = require("./routes");
 const cookieParser = require("cookie-parser");
-var cors = require("cors");
+const cors = require("cors");
+
+const db = require("./db");
+
+const routes = require("./routes");
 
 const {
   User,
@@ -20,7 +22,6 @@ const server = express();
 const corsOptions = {
   credentials: true,
   origin: "http://localhost:3000",
-  ///..other options
 };
 
 server.use(cors(corsOptions));
