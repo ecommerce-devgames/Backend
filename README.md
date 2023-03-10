@@ -1,5 +1,12 @@
 # Backend
 
+# About the project
+
+Name: DevGames3 (Ecommerce)
+Backend team: Sergio Genes, Alan Figueroa, Fabio Alessandro. 
+Frontend team: Francisco Garcia, Alex Duran, Maria Cruz Schena.
+
+
 ## Getting started
 
 1. Clone this repository in your CLI
