@@ -78,7 +78,8 @@ router.put("/me/edit", validateToken, (req, res, next) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token").sendStatus(204);
+  res.clearCookie("token");
+  res.status(204).send("logout");
 });
 
 router.get("/admin/all", validateToken, (req, res, next) => {
@@ -90,6 +91,7 @@ router.get("/admin/all", validateToken, (req, res, next) => {
 });
 
 router.put("/admin/access", validateToken, (req, res, next) => {
+  // Cambiar a params
   if (!req.user.isAdmin) res.sendStatus(401);
   User.update(
     { isAdmin: fn("NOT", col("isAdmin")) },
