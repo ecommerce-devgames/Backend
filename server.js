@@ -22,7 +22,7 @@ const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000",
+  origin: process.env.CORS_ORIGIN,
 };
 
 server.use(cors(corsOptions));
