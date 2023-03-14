@@ -14,6 +14,7 @@ router.post("/register", async (req, res, next) => {
     
     where: { email: data.email }, 
     defaults: { ...data }
+
   })
     .catch (error => next(error));
 
