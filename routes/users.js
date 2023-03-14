@@ -1,26 +1,33 @@
 const express = require("express");
 const { fn, col } = require("sequelize");
-const { User } = require("../models");
+const { User, Cart } = require("../models");
 const { generateToken } = require("../utils/token");
 const { validateToken } = require("../middleware/validateToken");
 
 const router = express.Router();
 
-router.post("/register", (req, res, next) => {
-  const { isAdmin, ...data } = req.body;
-  return User.findOrCreate({
-    where: {
-      email: data.email,
-    },
-    defaults: {
-      ...data,
-    },
+router.post("/register", async (req, res, next) => {
+
+  const {isAdmin, ...data} = req.body;
+
+  const [user, created] = await User.findOrCreate({ 
+    
+    where: { email: data.email }, 
+    defaults: { ...data }
+
   })
-    .then(([user, created]) => {
-      if (created) res.sendStatus(201);
-      else res.sendStatus(403);
-    })
-    .catch((err) => next(err));
+    .catch (error => next(error));
+
+  if (created) {
+    
+    const cart = await Cart.create().catch(error => next(error));
+
+    cart.setUser(user); 
+
+    return res.sendStatus(201);  
+  }
+  
+  return res.sendStatus(403);
 });
 
 router.post("/login", (req, res, next) => {
