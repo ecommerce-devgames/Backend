@@ -3,7 +3,7 @@ const { fn, col } = require("sequelize");
 const { User, Cart } = require("../models");
 const { generateToken } = require("../utils/token");
 const { validateToken } = require("../middleware/validateToken");
-const { userRegister, userLogin } = require("../controllers/users");
+const { userRegister, userLogin, userMe } = require("../controllers/users");
 
 const router = express.Router();
 
@@ -11,9 +11,7 @@ router.post("/register", userRegister);
 
 router.post("/login", userLogin);
 
-router.get("/me", validateToken, (req, res, next) => {
-  res.send(req.user);
-});
+router.get("/me", validateToken, userMe);
 
 router.put("/me/edit", validateToken, (req, res, next) => {
   return User.findOne({ where: { email: req.user.email } })
