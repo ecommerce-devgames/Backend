@@ -3,7 +3,12 @@ const { fn, col } = require("sequelize");
 const { User, Cart } = require("../models");
 const { generateToken } = require("../utils/token");
 const { validateToken } = require("../middleware/validateToken");
-const { userRegister, userLogin, userMe } = require("../controllers/users");
+const {
+  userRegister,
+  userLogin,
+  userMe,
+  userMeEdit,
+} = require("../controllers/users");
 
 const router = express.Router();
 
@@ -13,23 +18,7 @@ router.post("/login", userLogin);
 
 router.get("/me", validateToken, userMe);
 
-router.put("/me/edit", validateToken, (req, res, next) => {
-  return User.findOne({ where: { email: req.user.email } })
-    .then((user) =>
-      User.update(
-        { ...req.body },
-        { where: { email: user.email }, returning: true, individualHooks: true }
-      )
-    )
-    .then(([affected, resulting]) => {
-      const { id, name, lastName, email, isAdmin } = resulting[0];
-      const payload = { id, name, lastName, email, isAdmin };
-      const token = generateToken(payload);
-
-      res.cookie("token", token).send(payload);
-    })
-    .catch((err) => next(err));
-});
+router.put("/me/edit", validateToken, userMeEdit);
 
 router.post("/logout", (req, res) => {
   res.clearCookie("token");
