@@ -87,6 +87,13 @@ const adminAccessToUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const adminDeleteAUser = (req, res, next) => {
+  if (!req.user.isAdmin) res.sendStatus(401);
+  return User.destroy({ where: { id: req.params.id } })
+    .then(() => res.sendStatus(204))
+    .catch((err) => next(err));
+};
+
 module.exports = {
   userRegister,
   userLogin,
@@ -95,4 +102,5 @@ module.exports = {
   userLogout,
   allUsers,
   adminAccessToUser,
+  adminDeleteAUser,
 };
