@@ -1,3 +1,4 @@
+const { fn, col } = require("sequelize");
 const { User, Cart } = require("../models");
 const { generateToken } = require("../utils/token");
 
@@ -76,6 +77,16 @@ const allUsers = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const adminAccessToUser = (req, res, next) => {
+  if (!req.user.isAdmin) res.sendStatus(401);
+  return User.update(
+    { isAdmin: fn("NOT", col("isAdmin")) },
+    { where: { id: req.params.id }, returning: true }
+  )
+    .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
+    .catch((err) => next(err));
+};
+
 module.exports = {
   userRegister,
   userLogin,
@@ -83,4 +94,5 @@ module.exports = {
   userMeEdit,
   userLogout,
   allUsers,
+  adminAccessToUser,
 };
