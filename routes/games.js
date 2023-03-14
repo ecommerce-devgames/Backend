@@ -1,4 +1,5 @@
 const express = require("express");
+const { Op } = require("sequelize");
 const { validateToken } = require("../middleware/validateToken");
 const { Game, User, Developer, Genres, Platform, Tag } = require("../models");
 
@@ -10,12 +11,7 @@ router.get("/", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.get("/:id", (req, res, next) => {
-  return Game.findByPk(req.params.id)
-    .then((game) => res.send(game))
-    .catch((err) => next(err));
-});
-
+// find games by category
 router.get("/category/:category", validateToken, (req, res, next) => {
   const category = req.params.category;
   return Game.findAll({
@@ -38,6 +34,41 @@ router.get("/category/:category", validateToken, (req, res, next) => {
     ],
   })
     .then((games) => res.status(200).send(games))
+    .catch((err) => next(err));
+});
+
+// search a  game by name
+router.get("/search", validateToken, (req, res, next) => {
+  const name = req.query.name;
+
+  return Game.findAll({
+    include: [
+      {
+        model: Genres,
+      },
+      {
+        model: Developer,
+      },
+      {
+        model: Platform,
+      },
+      {
+        model: Tag,
+      },
+    ],
+    where: {
+      name: {
+        [Op.like]: `%${name}%`,
+      },
+    },
+  })
+    .then((games) => res.status(200).send(games))
+    .catch((err) => next(err));
+});
+
+router.get("/:id", (req, res, next) => {
+  return Game.findByPk(req.params.id)
+    .then((game) => res.send(game))
     .catch((err) => next(err));
 });
 
