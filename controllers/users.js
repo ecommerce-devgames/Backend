@@ -45,4 +45,22 @@ const userMe = (req, res, next) => {
   res.send(req.user);
 };
 
-module.exports = { userRegister, userLogin, userMe };
+const userMeEdit = (req, res, next) => {
+  return User.findOne({ where: { email: req.user.email } })
+    .then((user) =>
+      User.update(
+        { ...req.body },
+        { where: { email: user.email }, returning: true, individualHooks: true }
+      )
+    )
+    .then(([affected, resulting]) => {
+      const { id, name, lastName, email, isAdmin } = resulting[0];
+      const payload = { id, name, lastName, email, isAdmin };
+      const token = generateToken(payload);
+
+      res.cookie("token", token).send(payload);
+    })
+    .catch((err) => next(err));
+};
+
+module.exports = { userRegister, userLogin, userMe, userMeEdit };
