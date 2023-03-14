@@ -7,10 +7,10 @@ const { validateToken } = require("../middleware/validateToken");
 const router = express.Router();
 
 router.post("/register", (req, res, next) => {
-  const [isAdmin, ...data] = req.body;
+  const { isAdmin, ...data } = req.body;
   return User.findOrCreate({
     where: {
-      email,
+      email: data.email,
     },
     defaults: {
       ...data,

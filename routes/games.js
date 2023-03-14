@@ -1,6 +1,6 @@
 const express = require("express");
 const { validateToken } = require("../middleware/validateToken");
-const { Game, User } = require("../models");
+const { Game, User, Developer, Genres, Platform, Tag } = require("../models");
 
 const router = express.Router();
 
@@ -13,6 +13,31 @@ router.get("/", (req, res, next) => {
 router.get("/:id", (req, res, next) => {
   return Game.findByPk(req.params.id)
     .then((game) => res.send(game))
+    .catch((err) => next(err));
+});
+
+router.get("/category/:category", validateToken, (req, res, next) => {
+  const category = req.params.category;
+  return Game.findAll({
+    include: [
+      {
+        model: Genres,
+        where: {
+          name: category,
+        },
+      },
+      {
+        model: Developer,
+      },
+      {
+        model: Platform,
+      },
+      {
+        model: Tag,
+      },
+    ],
+  })
+    .then((games) => res.status(200).send(games))
     .catch((err) => next(err));
 });
 
