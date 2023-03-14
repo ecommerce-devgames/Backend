@@ -63,4 +63,9 @@ const userMeEdit = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports = { userRegister, userLogin, userMe, userMeEdit };
+const userLogout = (req, res) => {
+  res.clearCookie("token");
+  res.status(204).send("logout");
+};
+
+module.exports = { userRegister, userLogin, userMe, userMeEdit, userLogout };

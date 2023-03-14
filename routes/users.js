@@ -1,13 +1,13 @@
 const express = require("express");
 const { fn, col } = require("sequelize");
 const { User, Cart } = require("../models");
-const { generateToken } = require("../utils/token");
 const { validateToken } = require("../middleware/validateToken");
 const {
   userRegister,
   userLogin,
   userMe,
   userMeEdit,
+  userLogout,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -20,10 +20,7 @@ router.get("/me", validateToken, userMe);
 
 router.put("/me/edit", validateToken, userMeEdit);
 
-router.post("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.status(204).send("logout");
-});
+router.post("/logout", userLogout);
 
 router.get("/admin/all", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
