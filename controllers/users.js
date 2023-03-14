@@ -41,4 +41,8 @@ const userLogin = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports = { userRegister, userLogin };
+const userMe = (req, res, next) => {
+  res.send(req.user);
+};
+
+module.exports = { userRegister, userLogin, userMe };
