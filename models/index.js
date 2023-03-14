@@ -11,8 +11,8 @@ Cart.belongsTo(User);
 User.hasOne(Cart);
 
 // Relationship Cart-Game
-Game.belongsToMany(Cart, { through: "cartItem" });
-Cart.belongsToMany(Game, { through: "cartItem" });
+Game.belongsToMany(Cart, { through: "cart_item" });
+Cart.belongsToMany(Game, { through: "cart_item" });
 
 // Relationship Game-Developer
 

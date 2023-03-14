@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 const db = require("./db");
 
@@ -16,12 +17,12 @@ const {
   Cart,
 } = require("./models");
 
-const PORT = 3001;
+const PORT = process.env.PORT;
 const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000",
+  origin: process.env.CORS_ORIGIN,
 };
 
 server.use(cors(corsOptions));
