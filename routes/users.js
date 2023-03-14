@@ -1,5 +1,4 @@
 const express = require("express");
-const { fn, col } = require("sequelize");
 const { User, Cart } = require("../models");
 const { validateToken } = require("../middleware/validateToken");
 const {
@@ -9,6 +8,7 @@ const {
   userMeEdit,
   userLogout,
   allUsers,
+  adminAccessToUser,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -25,15 +25,7 @@ router.post("/logout", userLogout);
 
 router.get("/admin", validateToken, allUsers);
 
-router.put("/admin/access/:id", validateToken, (req, res, next) => {
-  if (!req.user.isAdmin) res.sendStatus(401);
-  return User.update(
-    { isAdmin: fn("NOT", col("isAdmin")) },
-    { where: { id: req.params.id }, returning: true }
-  )
-    .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
-    .catch((err) => next(err));
-});
+router.put("/admin/access/:id", validateToken, adminAccessToUser);
 
 router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);
