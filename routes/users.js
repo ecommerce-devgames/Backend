@@ -8,6 +8,7 @@ const {
   userMe,
   userMeEdit,
   userLogout,
+  allUsers,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -22,13 +23,7 @@ router.put("/me/edit", validateToken, userMeEdit);
 
 router.post("/logout", userLogout);
 
-router.get("/admin/all", validateToken, (req, res, next) => {
-  if (!req.user.isAdmin) res.sendStatus(401);
-  return User.findAll()
-
-    .then((users) => res.send(users))
-    .catch((err) => next(err));
-});
+router.get("/admin", validateToken, allUsers);
 
 router.put("/admin/access/:id", validateToken, (req, res, next) => {
   if (!req.user.isAdmin) res.sendStatus(401);

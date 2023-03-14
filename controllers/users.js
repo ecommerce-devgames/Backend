@@ -68,4 +68,19 @@ const userLogout = (req, res) => {
   res.status(204).send("logout");
 };
 
-module.exports = { userRegister, userLogin, userMe, userMeEdit, userLogout };
+const allUsers = (req, res, next) => {
+  if (!req.user.isAdmin) res.sendStatus(401);
+  return User.findAll()
+
+    .then((users) => res.send(users))
+    .catch((err) => next(err));
+};
+
+module.exports = {
+  userRegister,
+  userLogin,
+  userMe,
+  userMeEdit,
+  userLogout,
+  allUsers,
+};
