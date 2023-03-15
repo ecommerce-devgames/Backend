@@ -55,7 +55,7 @@ router.get("/search", validateToken, (req, res, next) => {
     ],
     where: {
       name: {
-        [Op.like]: `%${name}%`,
+        [Op.iLike]: `%${name}%`,
       },
     },
   })
