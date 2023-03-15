@@ -62,4 +62,22 @@ const searchGameByName = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports = { getAllGames, findGamesByCategory, searchGameByName };
+const getAGameById = (req, res, next) => {
+  return Game.findByPk(req.params.id, {
+    include: [
+      { model: Genres, attributes: ["name"] },
+      { model: Developer, attributes: ["name"] },
+      { model: Platform, attributes: ["name"] },
+      { model: Tag, attributes: ["name"] },
+    ],
+  })
+    .then((game) => res.send(game))
+    .catch((err) => next(err));
+};
+
+module.exports = {
+  getAllGames,
+  findGamesByCategory,
+  searchGameByName,
+  getAGameById,
+};
