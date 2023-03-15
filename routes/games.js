@@ -6,6 +6,7 @@ const {
   getAllGames,
   findGamesByCategory,
   searchGameByName,
+  getAGameById,
 } = require("../controllers/games");
 
 const router = express.Router();
@@ -18,18 +19,8 @@ router.get("/category/:category", validateToken, findGamesByCategory);
 // search a  game by name
 router.get("/search", validateToken, searchGameByName);
 
-router.get("/:id", (req, res, next) => {
-  return Game.findByPk(req.params.id, {
-    include: [
-      { model: Genres, attributes: ["name"] },
-      { model: Developer, attributes: ["name"] },
-      { model: Platform, attributes: ["name"] },
-      { model: Tag, attributes: ["name"] },
-    ],
-  })
-    .then((game) => res.send(game))
-    .catch((err) => next(err));
-});
+// get a game by ID
+router.get("/:id", getAGameById);
 
 router.post("/admin/create", validateToken, async (req, res, next) => {
   if (!req.user.isAdmin) return res.sendStatus(401);
