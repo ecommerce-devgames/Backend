@@ -1,138 +1,156 @@
 const { Op } = require("sequelize");
-const { Game, User, Developer, Genres, Platform, Tag } = require("../models");
+const { Game, Developer, Genres, Platform, Tag } = require("../models");
 
-const getAllGames = (req, res, next) => {
-  return Game.findAll()
-    .then((games) => res.send(games))
-    .catch((err) => next(err));
+const getAllGames = async (req, res, next) => {
+  let games;
+  try {
+    games = await Game.findAll();
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.send(games).status(200);
 };
 
-const findGamesByCategory = (req, res, next) => {
+const findGamesByCategory = async (req, res, next) => {
   const category = req.params.category;
-  return Game.findAll({
-    include: [
-      {
-        model: Genres,
-        where: {
-          name: {
-            [Op.iLike]: category,
+  let games;
+  try {
+    games = await Game.findAll({
+      include: [
+        {
+          model: Genres,
+          where: {
+            name: {
+              [Op.iLike]: category,
+            },
           },
         },
-      },
-      {
-        model: Developer,
-      },
-      {
-        model: Platform,
-      },
-      {
-        model: Tag,
-      },
-    ],
-  })
-    .then((games) => res.status(200).send(games))
-    .catch((err) => next(err));
+        {
+          model: Developer,
+        },
+        {
+          model: Platform,
+        },
+        {
+          model: Tag,
+        },
+      ],
+    });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.send(games).status(200);
 };
 
-const searchGameByName = (req, res, next) => {
+const searchGameByName = async (req, res, next) => {
   const name = req.query.name;
-
-  return Game.findAll({
-    include: [
-      {
-        model: Genres,
+  let games;
+  try {
+    games = await Game.findAll({
+      include: [
+        { model: Genres },
+        { model: Developer },
+        { model: Platform },
+        { model: Tag },
+      ],
+      where: {
+        name: {
+          [Op.iLike]: `%${name}%`,
+        },
       },
-      {
-        model: Developer,
-      },
-      {
-        model: Platform,
-      },
-      {
-        model: Tag,
-      },
-    ],
-    where: {
-      name: {
-        [Op.iLike]: `%${name}%`,
-      },
-    },
-  })
-    .then((games) => res.status(200).send(games))
-    .catch((err) => next(err));
+    });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.status(200).send(games);
 };
 
-const getAGameById = (req, res, next) => {
-  return Game.findByPk(req.params.id, {
-    include: [
-      { model: Genres, attributes: ["name"] },
-      { model: Developer, attributes: ["name"] },
-      { model: Platform, attributes: ["name"] },
-      { model: Tag, attributes: ["name"] },
-    ],
-  })
-    .then((game) => res.send(game))
-    .catch((err) => next(err));
+const getAGameById = async (req, res, next) => {
+  let game;
+  try {
+    game = await Game.findByPk(req.params.id, {
+      include: [
+        { model: Genres, attributes: ["name"] },
+        { model: Developer, attributes: ["name"] },
+        { model: Platform, attributes: ["name"] },
+        { model: Tag, attributes: ["name"] },
+      ],
+    });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.status(200).send(game);
 };
 
 const adminCreateAGame = async (req, res, next) => {
   if (!req.user.isAdmin) return res.sendStatus(401);
   const name = req.body.name.trim();
   const { genres, developers, platforms, ...data } = req.body;
-  const editGenres = await Genres.findAll({ where: { name: genres } });
-  const editDevelopers = await Developer.findAll({
-    where: { name: developers },
-  });
-  const editPlatforms = await Platform.findAll({ where: { name: platforms } });
+  let game, created, editDevelopers, editGenres, editPlatforms;
+  try {
+    editGenres = await Genres.findAll({ where: { name: genres } });
+    editDevelopers = await Developer.findAll({
+      where: { name: developers },
+    });
+    editPlatforms = await Platform.findAll({ where: { name: platforms } });
 
-  return Game.findOrCreate({
-    where: { name },
-    defaults: {
-      ...data,
-    },
-    include: [Genres, Developer, Platform],
-  })
-    .then(([game, created]) => {
-      if (created) {
-        game.setGenres(editGenres);
-        game.setDevelopers(editDevelopers);
-        game.setPlatforms(editPlatforms);
-        return res.status(201).send(game);
-      }
-      res.sendStatus(403);
-    })
-    .catch((err) => next(err));
+    [game, created] = await Game.findOrCreate({
+      where: { name },
+      defaults: {
+        ...data,
+      },
+      include: [Genres, Developer, Platform],
+    });
+    if (created) {
+      game.setGenres(editGenres);
+      game.setDevelopers(editDevelopers);
+      game.setPlatforms(editPlatforms);
+    }
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.status(200).send(game);
 };
 
 const adminEditAGame = async (req, res, next) => {
-  const { genres, developers, platforms, ...data } = req.body;
   if (!req.user.isAdmin) return res.sendStatus(401);
+  const { genres, developers, platforms, ...data } = req.body;
+  let editGenres, editDevelopers, editPlatforms, game, affected, resulting;
+  try {
+    editGenres = await Genres.findAll({ where: { name: genres } });
+    editPlatforms = await Platform.findAll({ where: { name: platforms } });
+    editDevelopers = await Developer.findAll({
+      where: { name: developers },
+    });
 
-  const editGenres = await Genres.findAll({ where: { name: genres } });
-  const editDevelopers = await Developer.findAll({
-    where: { name: developers },
-  });
-  const editPlatforms = await Platform.findAll({ where: { name: platforms } });
-  await Game.update(
-    { ...data },
-    { where: { id: req.params.id }, individualHooks: true }
-  );
-  return Game.findOne({
-    where: { id: req.params.id },
-    include: [Genres, Developer, Platform],
-  }).then((game) => {
-    game.setGenres(editGenres);
-    game.setDevelopers(editDevelopers);
-    game.setPlatforms(editPlatforms);
-    res.send(game);
-  });
+    [affected, resulting] = await Game.update(
+      { ...data },
+      { where: { id: req.params.id }, individualHooks: true }
+    );
+    if (affected) {
+      game = await Game.findOne({
+        where: { id: req.params.id },
+        include: [Genres, Developer, Platform],
+      });
+      game.setGenres(editGenres);
+      game.setDevelopers(editDevelopers);
+      game.setPlatforms(editPlatforms);
+    }
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.status(400).send(error);
 };
 
-const adminDeleteAGame = (req, res, next) => {
+const adminDeleteAGame = async (req, res, next) => {
   if (!req.user.isAdmin) return res.sendStatus(401);
-  return Game.destroy({ where: { id: req.params.id } })
-    .then(() => res.sendStatus(204))
-    .catch((err) => next(err));
+
+  try {
+    await Game.destroy({ where: { id: req.params.id } });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.sendStatus(204);
 };
 
 module.exports = {
