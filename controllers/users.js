@@ -1,4 +1,4 @@
-const { User, Cart } = require("../models");
+const { User, Cart, Library } = require("../models");
 const { generateToken } = require("../utils/token");
 
 const userRegister = async (req, res, next) => {
@@ -7,12 +7,20 @@ const userRegister = async (req, res, next) => {
   const [user, created] = await User.findOrCreate({
     where: { email: data.email },
     defaults: { ...data },
-  }).catch((error) => next(error));
+  })
 
   if (created) {
-    const cart = await Cart.create().catch((error) => next(error));
+    const cart = await Cart.create({
 
-    cart.setUser(user);
+      owner: `${user.name} ${user.lastName}`
+    });
+    const library = await Library.create({ 
+      
+      owner: `${user.name} ${user.lastName}`
+    });
+
+    user.setCart(cart);
+    user.setLibrary(library);
 
     return res.sendStatus(201);
   }

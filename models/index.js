@@ -5,10 +5,19 @@ const Genres = require("./Genres");
 const Tag = require("./Tag");
 const Developer = require("./Developer");
 const Cart = require("./Cart");
+const Library = require("./Library");
 
 // Relationship Cart-User
 Cart.belongsTo(User);
 User.hasOne(Cart);
+
+// Relationship Library-User
+Library.belongsTo(User);
+User.hasOne(Library);
+
+// Relationship Library-Game
+Game.belongsToMany(Library, { through: "library_item" });
+Library.belongsToMany(Game, { through: "library_item" });
 
 // Relationship Cart-Game
 Game.belongsToMany(Cart, { through: "cart_item" });
@@ -42,4 +51,5 @@ module.exports = {
   Tag,
   Developer,
   Cart,
+  Library
 };
