@@ -2,7 +2,6 @@ const User = require("./User");
 const Game = require("./Game");
 const Platform = require("./Platform");
 const Genres = require("./Genres");
-const Tag = require("./Tag");
 const Developer = require("./Developer");
 const Cart = require("./Cart");
 const Library = require("./Library");
@@ -36,10 +35,6 @@ Platform.belongsToMany(Game, { through: "game_platform" });
 Game.belongsToMany(Genres, { through: "game_genres" });
 Genres.belongsToMany(Game, { through: "game_genres" });
 
-// Relationship Game-Tag
-Game.belongsToMany(Tag, { through: "game_tag" });
-Tag.belongsToMany(Game, { through: "game_tag" });
-
 // Relationship Review-User
 Review.belongsTo(User);
 User.hasMany(Review);
@@ -53,7 +48,6 @@ module.exports = {
   Game,
   Platform,
   Genres,
-  Tag,
   Developer,
   Cart,
   Library,

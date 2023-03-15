@@ -1,8 +1,8 @@
-const { Game, Genres, Platform, Developer, Tag } = require("../models");
+const { Game, Genres, Platform, Developer } = require("../models");
 const games = require("./games");
 
 async function unionOfGames(gameSeed) {
-  const { genres, developers, platforms, tags, name } = gameSeed;
+  const { genres, developers, platforms, name } = gameSeed;
   let editGenres, editDevelopers, editPlatforms, game;
   try {
     editGenres = await Genres.findAll({ where: { name: genres } });
@@ -13,7 +13,7 @@ async function unionOfGames(gameSeed) {
 
     game = await Game.findOne({
       where: { name },
-      include: [Genres, Developer, Platform, Tag],
+      include: [Genres, Developer, Platform],
     });
 
     game.setGenres(editGenres);
@@ -22,6 +22,7 @@ async function unionOfGames(gameSeed) {
   } catch (error) {
     return console.log(error);
   }
+  return console.log("Relations Done");
 }
 
 games.forEach((gameSeed) => {
