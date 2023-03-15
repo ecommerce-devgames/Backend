@@ -1,8 +1,18 @@
-const { Model, DataTypes } = require("sequelize");
+const { Model, DataTypes, Op } = require("sequelize");
 
 const db = require("../db");
 
-class Game extends Model {}
+class Game extends Model {
+  static findByTag = async function (tag) {
+    return await Game.findAll({
+      where: {
+        tags: {
+          [Op.overlap]: [tag],
+        },
+      },
+    });
+  };
+}
 
 Game.init(
   {
@@ -37,6 +47,19 @@ Game.init(
     slug: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    tags: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: [],
+      set: function (tags) {
+        tags = tags || [];
+        if (typeof tags === "string") {
+          tags = tags.split(",").map(function (str) {
+            return str.trim();
+          });
+        }
+        this.setDataValue("tags", tags);
+      },
     },
   },
   {

@@ -4,6 +4,7 @@ const {
   getAllGames,
   findGamesByCategory,
   searchGameByName,
+  searchGameByTag,
   getAGameById,
   adminCreateAGame,
   adminEditAGame,
@@ -19,6 +20,10 @@ router.get("/category/:category", validateToken, findGamesByCategory);
 
 // search a  game by name
 router.get("/search", validateToken, searchGameByName);
+
+// search by tag
+
+router.get("/tags/:tag", validateToken, searchGameByTag);
 
 // get a game by ID
 router.get("/:id", getAGameById);

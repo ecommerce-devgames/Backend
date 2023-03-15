@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Game, Developer, Genres, Platform, Tag } = require("../models");
+const { Game, Developer, Genres, Platform } = require("../models");
 
 const getAllGames = async (req, res, next) => {
   let games;
@@ -17,23 +17,9 @@ const findGamesByCategory = async (req, res, next) => {
   try {
     games = await Game.findAll({
       include: [
-        {
-          model: Genres,
-          where: {
-            name: {
-              [Op.iLike]: category,
-            },
-          },
-        },
-        {
-          model: Developer,
-        },
-        {
-          model: Platform,
-        },
-        {
-          model: Tag,
-        },
+        { model: Genres, where: { name: { [Op.iLike]: category } } },
+        { model: Developer },
+        { model: Platform },
       ],
     });
   } catch (error) {
@@ -47,18 +33,22 @@ const searchGameByName = async (req, res, next) => {
   let games;
   try {
     games = await Game.findAll({
-      include: [
-        { model: Genres },
-        { model: Developer },
-        { model: Platform },
-        { model: Tag },
-      ],
+      include: [{ model: Genres }, { model: Developer }, { model: Platform }],
       where: {
         name: {
           [Op.iLike]: `%${name}%`,
         },
       },
     });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+  return res.status(200).send(games);
+};
+const searchGameByTag = async (req, res, next) => {
+  let games;
+  try {
+    games = await Game.findByTag(req.params.tag);
   } catch (error) {
     return res.status(400).send(error);
   }
@@ -73,7 +63,6 @@ const getAGameById = async (req, res, next) => {
         { model: Genres, attributes: ["name"] },
         { model: Developer, attributes: ["name"] },
         { model: Platform, attributes: ["name"] },
-        { model: Tag, attributes: ["name"] },
       ],
     });
   } catch (error) {
@@ -139,7 +128,7 @@ const adminEditAGame = async (req, res, next) => {
   } catch (error) {
     return res.send(error).status(400);
   }
-  return res.status(400).send(error);
+  return res.status(400).send(game);
 };
 
 const adminDeleteAGame = async (req, res, next) => {
@@ -161,4 +150,5 @@ module.exports = {
   adminCreateAGame,
   adminEditAGame,
   adminDeleteAGame,
+  searchGameByTag,
 };
