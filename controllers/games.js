@@ -34,4 +34,32 @@ const findGamesByCategory = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports = { getAllGames, findGamesByCategory };
+const searchGameByName = (req, res, next) => {
+  const name = req.query.name;
+
+  return Game.findAll({
+    include: [
+      {
+        model: Genres,
+      },
+      {
+        model: Developer,
+      },
+      {
+        model: Platform,
+      },
+      {
+        model: Tag,
+      },
+    ],
+    where: {
+      name: {
+        [Op.iLike]: `%${name}%`,
+      },
+    },
+  })
+    .then((games) => res.status(200).send(games))
+    .catch((err) => next(err));
+};
+
+module.exports = { getAllGames, findGamesByCategory, searchGameByName };
