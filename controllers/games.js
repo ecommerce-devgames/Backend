@@ -104,10 +104,35 @@ const adminCreateAGame = async (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const adminEditAGame = async (req, res, next) => {
+  const { genres, developers, platforms, ...data } = req.body;
+  if (!req.user.isAdmin) return res.sendStatus(401);
+
+  const editGenres = await Genres.findAll({ where: { name: genres } });
+  const editDevelopers = await Developer.findAll({
+    where: { name: developers },
+  });
+  const editPlatforms = await Platform.findAll({ where: { name: platforms } });
+  await Game.update(
+    { ...data },
+    { where: { id: req.params.id }, individualHooks: true }
+  );
+  return Game.findOne({
+    where: { id: req.params.id },
+    include: [Genres, Developer, Platform],
+  }).then((game) => {
+    game.setGenres(editGenres);
+    game.setDevelopers(editDevelopers);
+    game.setPlatforms(editPlatforms);
+    res.send(game);
+  });
+};
+
 module.exports = {
   getAllGames,
   findGamesByCategory,
   searchGameByName,
   getAGameById,
   adminCreateAGame,
+  adminEditAGame,
 };
