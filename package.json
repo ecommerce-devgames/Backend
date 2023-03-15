@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "seed": "concurrently 'node seeds/seedUser.js' 'node seeds/seedAll.js'",
+    "relations": "node seeds/seedGames.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "concurrently": "^7.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

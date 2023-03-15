@@ -32,11 +32,11 @@ createdb devgames3
 node seedUser.js
 ```
 
-5. Now we need to put in our DB games, genres, developers and platforms, for this we need to execute to more seeds in order and wait for the execution of each one.
+5. Now we need to put in our DB games, genres, developers and platforms, for this we need to execute the next scripts in order.
 
 ```
- 1: node seedAll.js
- 2: node seedGames.js
+ 1: npm run seed
+ 2: npm run relations
 ```
 
 6. Start the server.

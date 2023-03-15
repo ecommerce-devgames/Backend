@@ -8,9 +8,8 @@ async function createSuperUser() {
     password: "12345",
     email: "super.user@gmail.com",
     isAdmin: true,
-  }).then(() => {
-    console.log("User Created!!");
   });
 }
 
 createSuperUser();
+console.log("User Created!!");
