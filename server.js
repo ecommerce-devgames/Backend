@@ -15,6 +15,7 @@ const {
   Tag,
   Developer,
   Cart,
+  Review,
 } = require("./models");
 
 const PORT = process.env.PORT;
