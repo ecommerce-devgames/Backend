@@ -128,6 +128,13 @@ const adminEditAGame = async (req, res, next) => {
   });
 };
 
+const adminDeleteAGame = (req, res, next) => {
+  if (!req.user.isAdmin) return res.sendStatus(401);
+  return Game.destroy({ where: { id: req.params.id } })
+    .then(() => res.sendStatus(204))
+    .catch((err) => next(err));
+};
+
 module.exports = {
   getAllGames,
   findGamesByCategory,
@@ -135,4 +142,5 @@ module.exports = {
   getAGameById,
   adminCreateAGame,
   adminEditAGame,
+  adminDeleteAGame,
 };

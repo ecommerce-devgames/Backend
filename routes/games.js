@@ -1,7 +1,5 @@
 const express = require("express");
-const { Op } = require("sequelize");
 const { validateToken } = require("../middleware/validateToken");
-const { Game, User, Developer, Genres, Platform, Tag } = require("../models");
 const {
   getAllGames,
   findGamesByCategory,
@@ -9,6 +7,7 @@ const {
   getAGameById,
   adminCreateAGame,
   adminEditAGame,
+  adminDeleteAGame,
 } = require("../controllers/games");
 
 const router = express.Router();
@@ -28,11 +27,6 @@ router.post("/admin/create", validateToken, adminCreateAGame);
 
 router.put("/admin/edit/:id", validateToken, adminEditAGame);
 
-router.delete("/admin/delete/:id", validateToken, (req, res, next) => {
-  if (!req.user.isAdmin) return res.sendStatus(401);
-  return Game.destroy({ where: { id: req.params.id } })
-    .then(() => res.sendStatus(204))
-    .catch((err) => next(err));
-});
+router.delete("/admin/delete/:id", validateToken, adminDeleteAGame);
 
 module.exports = router;
