@@ -3,26 +3,27 @@ const games = require("./games");
 
 async function unionOfGames(gameSeed) {
   const { genres, developers, platforms, tags, name } = gameSeed;
-
-  const editGenres = await Genres.findAll({ where: { name: genres } });
-  const editDevelopers = await Developer.findAll({
-    where: { name: developers },
-  });
-  const editPlatforms = await Platform.findAll({ where: { name: platforms } });
-
-  await Game.findOne({
-    where: { name },
-    include: [Genres, Developer, Platform, Tag],
-  })
-    .then((game) => {
-      game.setGenres(editGenres);
-      game.setDevelopers(editDevelopers);
-      game.setPlatforms(editPlatforms);
-    })
-    .then(() => {
-      return console.log("Finish");
+  let editGenres, editDevelopers, editPlatforms, game;
+  try {
+    editGenres = await Genres.findAll({ where: { name: genres } });
+    editDevelopers = await Developer.findAll({
+      where: { name: developers },
     });
+    editPlatforms = await Platform.findAll({ where: { name: platforms } });
+
+    game = await Game.findOne({
+      where: { name },
+      include: [Genres, Developer, Platform, Tag],
+    });
+
+    game.setGenres(editGenres);
+    game.setDevelopers(editDevelopers);
+    game.setPlatforms(editPlatforms);
+  } catch (error) {
+    return console.log(error);
+  }
 }
+
 games.forEach((gameSeed) => {
   unionOfGames(gameSeed);
 });
