@@ -2,37 +2,14 @@ const express = require("express");
 const { Op } = require("sequelize");
 const { validateToken } = require("../middleware/validateToken");
 const { Game, User, Developer, Genres, Platform, Tag } = require("../models");
-const { getAllGames } = require("../controllers/games");
+const { getAllGames, findGamesByCategory } = require("../controllers/games");
 
 const router = express.Router();
 
 router.get("/", getAllGames);
 
 // find games by category
-router.get("/category/:category", validateToken, (req, res, next) => {
-  const category = req.params.category;
-  return Game.findAll({
-    include: [
-      {
-        model: Genres,
-        where: {
-          name: category,
-        },
-      },
-      {
-        model: Developer,
-      },
-      {
-        model: Platform,
-      },
-      {
-        model: Tag,
-      },
-    ],
-  })
-    .then((games) => res.status(200).send(games))
-    .catch((err) => next(err));
-});
+router.get("/category/:category", validateToken, findGamesByCategory);
 
 // search a  game by name
 router.get("/search", validateToken, (req, res, next) => {
