@@ -1,4 +1,5 @@
 const express = require("express");
+const volleyball = require("volleyball");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
@@ -15,6 +16,7 @@ const {
   Tag,
   Developer,
   Cart,
+  Review,
 } = require("./models");
 
 const PORT = process.env.PORT;
@@ -25,6 +27,7 @@ const corsOptions = {
   origin: process.env.CORS_ORIGIN,
 };
 
+server.use(volleyball);
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());

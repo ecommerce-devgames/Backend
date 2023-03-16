@@ -1,28 +1,30 @@
-const { Game, Genres, Platform, Developer, Tag } = require("../models");
+const { Game, Genres, Platform, Developer } = require("../models");
 const games = require("./games");
 
 async function unionOfGames(gameSeed) {
-  const { genres, developers, platforms, tags, name } = gameSeed;
-
-  const editGenres = await Genres.findAll({ where: { name: genres } });
-  const editDevelopers = await Developer.findAll({
-    where: { name: developers },
-  });
-  const editPlatforms = await Platform.findAll({ where: { name: platforms } });
-
-  await Game.findOne({
-    where: { name },
-    include: [Genres, Developer, Platform, Tag],
-  })
-    .then((game) => {
-      game.setGenres(editGenres);
-      game.setDevelopers(editDevelopers);
-      game.setPlatforms(editPlatforms);
-    })
-    .then(() => {
-      return console.log("Finish");
+  const { genres, developers, platforms, name } = gameSeed;
+  let editGenres, editDevelopers, editPlatforms, game;
+  try {
+    editGenres = await Genres.findAll({ where: { name: genres } });
+    editDevelopers = await Developer.findAll({
+      where: { name: developers },
     });
+    editPlatforms = await Platform.findAll({ where: { name: platforms } });
+
+    game = await Game.findOne({
+      where: { name },
+      include: [Genres, Developer, Platform],
+    });
+
+    game.setGenres(editGenres);
+    game.setDevelopers(editDevelopers);
+    game.setPlatforms(editPlatforms);
+  } catch (error) {
+    return console.log(error);
+  }
+  return console.log("Relations Done");
 }
+
 games.forEach((gameSeed) => {
   unionOfGames(gameSeed);
 });
