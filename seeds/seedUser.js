@@ -1,5 +1,4 @@
 const { User } = require("../models");
-const { create } = require("../models/User");
 
 async function createSuperUser() {
   await User.create({
@@ -9,7 +8,7 @@ async function createSuperUser() {
     email: "super.user@gmail.com",
     isAdmin: true,
   });
+  console.log("Super User Created!!");
 }
 
 createSuperUser();
-console.log("User Created!!");

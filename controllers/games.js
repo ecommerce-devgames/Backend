@@ -139,7 +139,7 @@ const adminDeleteAGame = async (req, res, next) => {
   } catch (error) {
     return res.status(400).send(error);
   }
-  return res.sendStatus(204);
+  return res.send("Game Deleted").status(200);
 };
 
 module.exports = {

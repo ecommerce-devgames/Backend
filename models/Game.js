@@ -81,7 +81,9 @@ Game.beforeValidate((game) => {
       .replace(/\s+/g, "_")
       .replace(/\W/g, "");
   if (game.slug) game.downloadURL = `${game.slug}/${random}`;
-  game.price = parseFloat(Math.random() * (99.9 - 5.1) + 5.1).toFixed(1);
+  if (!game.price) {
+    game.price = parseFloat(Math.random() * (99.9 - 5.1) + 5.1).toFixed(1);
+  }
 });
 
 Game.addHook("beforeUpdate", (game) => {

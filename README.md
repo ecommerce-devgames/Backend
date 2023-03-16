@@ -26,20 +26,14 @@ npm install or npm i
 createdb devgames3
 ```
 
-4. We need to create an User Admin, for this task we need to execute the seed in the CLI from the folder seeds
-
-```
-node seedUser.js
-```
-
-5. Now we need to put in our DB games, genres, developers and platforms, for this we need to execute the next scripts in order.
+4. Now we need to put in our DB games, genres, developers and platforms, and create a Super User for this we need to execute the next scripts in order.
 
 ```
  1: npm run seed
  2: npm run relations
 ```
 
-6. Start the server.
+5. Start the server.
 
 ```
 npm start

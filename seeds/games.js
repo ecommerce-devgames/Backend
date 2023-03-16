@@ -276,9 +276,7 @@ const games = [
       "PS Vita",
       "Android",
       "Xbox One",
-
       "Nintendo Switch",
-
       "iOS",
       "PC",
       "macOS",
@@ -340,7 +338,6 @@ const games = [
       "Xbox One",
       "PC",
       "PlayStation 4",
-      "Web",
       "Xbox Series S/X",
       "PlayStation 5",
     ],

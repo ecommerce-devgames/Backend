@@ -4,72 +4,70 @@ const { generateToken } = require("../utils/token");
 
 const userRegister = async (req, res, next) => {
   const { isAdmin, ...data } = req.body;
-
-  const [user, created] = await User.findOrCreate({
-    where: { email: data.email },
-    defaults: { ...data },
-  })
-
-  if (created) {
-    const cart = await Cart.create({
-
-      owner: `${user.name} ${user.lastName}`
-    });
-    const library = await Library.create({ 
-      
-      owner: `${user.name} ${user.lastName}`
+  let user, created, cart, library;
+  try {
+    [user, created] = await User.findOrCreate({
+      where: { email: data.email },
+      defaults: { ...data },
     });
 
-    user.setCart(cart);
-    user.setLibrary(library);
-
-    return res.sendStatus(201);
+    if (created) {
+      cart = await Cart.create({
+        owner: `${user.name} ${user.lastName}`,
+      });
+      library = await Library.create({
+        owner: `${user.name} ${user.lastName}`,
+      });
+      user.setCart(cart);
+      user.setLibrary(library);
+    }
+  } catch (error) {
+    return res.send(error).status(400);
   }
-
-  return res.sendStatus(403);
+  return res.sendStatus(201);
 };
 
-const userLogin = (req, res, next) => {
+const userLogin = async (req, res, next) => {
   const { email, password } = req.body;
-
-  return User.findOne({ where: { email } })
-    .then((user) => {
-      user.validatePassword(password).then((validation) => {
-        if (!validation) return res.sendStatus(401);
-        const payload = {
-          id: user.id,
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          isAdmin: user.isAdmin,
-        };
-        const token = generateToken(payload);
-        res.cookie("token", token).send(payload);
-      });
-    })
-    .catch((err) => next(err));
+  let user, validation, payload, token;
+  try {
+    user = await User.findOne({ where: { email } });
+    validation = await user.validatePassword(password);
+    console.log(validation);
+    if (!validation) return res.sendStatus(401);
+    payload = {
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    };
+    token = generateToken(payload);
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.cookie("token", token).send(payload);
 };
 
 const userMe = (req, res, next) => {
   res.send(req.user);
 };
 
-const userMeEdit = (req, res, next) => {
-  return User.findOne({ where: { email: req.user.email } })
-    .then((user) =>
-      User.update(
-        { ...req.body },
-        { where: { email: user.email }, returning: true, individualHooks: true }
-      )
-    )
-    .then(([affected, resulting]) => {
-      const { id, name, lastName, email, isAdmin } = resulting[0];
-      const payload = { id, name, lastName, email, isAdmin };
-      const token = generateToken(payload);
-
-      res.cookie("token", token).send(payload);
-    })
-    .catch((err) => next(err));
+const userMeEdit = async (req, res, next) => {
+  let user, affected, resulting, payload, token;
+  try {
+    user = await User.findOne({ where: { email: req.user.email } });
+    [affected, resulting] = await User.update(
+      { ...req.body },
+      { where: { email: user.email }, returning: true, individualHooks: true }
+    );
+    const { id, name, lastName, email, isAdmin } = resulting[0];
+    payload = { id, name, lastName, email, isAdmin };
+    token = await generateToken(payload);
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.cookie("token", token).send(payload);
 };
 
 const userLogout = (req, res) => {
@@ -77,29 +75,40 @@ const userLogout = (req, res) => {
   res.status(204).send("logout");
 };
 
-const allUsers = (req, res, next) => {
-  if (!req.user.isAdmin) res.sendStatus(401);
-  return User.findAll()
+const allUsers = async (req, res, next) => {
+  if (!req.user.isAdmin) return res.sendStatus(401);
+  let users;
+  try {
+    users = await User.findAll();
+  } catch (error) {
+    return res.send(error).status(400);
+  }
 
-    .then((users) => res.send(users))
-    .catch((err) => next(err));
+  return res.send(users).status(200);
 };
 
-const adminAccessToUser = (req, res, next) => {
-  if (!req.user.isAdmin) res.sendStatus(401);
-  return User.update(
-    { isAdmin: fn("NOT", col("isAdmin")) },
-    { where: { id: req.params.id }, returning: true }
-  )
-    .then(([affected, resulting]) => res.send(resulting[0].isAdmin))
-    .catch((err) => next(err));
+const adminAccessToUser = async (req, res, next) => {
+  if (!req.user.isAdmin) return res.sendStatus(401);
+  let affected, resulting;
+  try {
+    [affected, resulting] = await User.update(
+      { isAdmin: fn("NOT", col("isAdmin")) },
+      { where: { id: req.params.id }, returning: true }
+    );
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.send(resulting[0].isAdmin);
 };
 
-const adminDeleteAUser = (req, res, next) => {
-  if (!req.user.isAdmin) res.sendStatus(401);
-  return User.destroy({ where: { id: req.params.id } })
-    .then(() => res.sendStatus(204))
-    .catch((err) => next(err));
+const adminDeleteAUser = async (req, res, next) => {
+  if (!req.user.isAdmin) return res.sendStatus(401);
+  try {
+    await User.destroy({ where: { id: req.params.id } });
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.send("User Deleted").status(200);
 };
 
 module.exports = {
