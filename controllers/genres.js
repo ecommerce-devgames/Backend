@@ -44,7 +44,7 @@ const editAGenre = async (req, res, next) => {
   try {
     [affected, resulting] = await Genres.update(
       { ...req.body },
-      { where: { id: req.params.id }, returning: true }
+      { where: { name: req.params.name }, returning: true }
     );
   } catch (error) {
     return res.send(error).status(400);

@@ -16,7 +16,7 @@ router.get("/:id", getAGenreById);
 
 router.post("/create", validateToken, createAGenre);
 
-router.put("/edit/:id", validateToken, editAGenre);
+router.put("/edit/:name", validateToken, editAGenre);
 
 router.delete("/:id", validateToken, deleteAGenre);
 

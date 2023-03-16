@@ -1,4 +1,5 @@
-const { Op } = require("sequelize");
+const { Op, fn } = require("sequelize");
+const Sequelize = require("sequelize");
 const { Game, Developer, Genres, Platform } = require("../models");
 
 const getAllGames = async (req, res, next) => {
@@ -11,6 +12,20 @@ const getAllGames = async (req, res, next) => {
   return res.send(games).status(200);
 };
 
+const getGamesPagination = async (req, res, next) => {
+  const { page, limit } = req.query;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  let games;
+  try {
+    games = await Game.findAll();
+    gamesPerPage = games.slice(startIndex, endIndex);
+  } catch (error) {
+    return res.send(error).status(400);
+  }
+  return res.send(gamesPerPage);
+};
+
 const findGamesByCategory = async (req, res, next) => {
   const category = req.params.category;
   let games;
@@ -21,6 +36,8 @@ const findGamesByCategory = async (req, res, next) => {
         { model: Developer },
         { model: Platform },
       ],
+      limit: 9,
+      order: [fn("RANDOM")],
     });
   } catch (error) {
     return res.status(400).send(error);
@@ -151,4 +168,5 @@ module.exports = {
   adminEditAGame,
   adminDeleteAGame,
   searchGameByTag,
+  getGamesPagination,
 };
