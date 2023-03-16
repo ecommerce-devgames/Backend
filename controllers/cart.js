@@ -55,9 +55,9 @@ const purchaseCart = async (req, res, next) => {
     await cart.setGames([]);
 
     const { dataValues } = await cart.getUser();
-    const { email } = dataValues;
+    const { name, lastName, email } = dataValues;
 
-    mailer (email, cartGames);
+    await mailer (name, lastName, email, cartGames);
 
     return res.send("Purchase Successful!"); 
 }
