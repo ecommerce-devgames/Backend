@@ -22,9 +22,9 @@ async function unionOfGames(gameSeed) {
   } catch (error) {
     return console.log(error);
   }
-  return console.log("Relations Done");
 }
 
 games.forEach((gameSeed) => {
   unionOfGames(gameSeed);
 });
+return console.log("Creating The Relationships");
