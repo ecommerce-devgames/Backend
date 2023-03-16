@@ -128,7 +128,7 @@ const adminEditAGame = async (req, res, next) => {
   } catch (error) {
     return res.send(error).status(400);
   }
-  return res.status(400).send(game);
+  return res.status(202).send(game);
 };
 
 const adminDeleteAGame = async (req, res, next) => {
