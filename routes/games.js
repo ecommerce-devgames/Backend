@@ -9,11 +9,14 @@ const {
   adminCreateAGame,
   adminEditAGame,
   adminDeleteAGame,
+  getGamesPagination,
 } = require("../controllers/games");
 
 const router = express.Router();
 
 router.get("/", getAllGames);
+
+router.get("/pagination", getGamesPagination);
 
 // find games by category
 router.get("/category/:category", validateToken, findGamesByCategory);
