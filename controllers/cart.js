@@ -9,7 +9,7 @@ const cartItems = async (req, res, next) => {
 
     const cartGames = await cart.getGames({ joinTableAttributes: [] });
 
-    if (!cartGames.length) return res.send("Your cart seems empty...");
+    if (!cartGames.length) return res.send([]);
 
     return res.send(cartGames);
 }
@@ -70,7 +70,7 @@ const historyItems = async (req, res, next) => {
 
     const libraryGames = await library.getGames({ joinTableAttributes: [] });
 
-    if (!libraryGames.length) return res.send("No games to display.");
+    if (!libraryGames.length) return res.send([]);
 
     return res.send(libraryGames); 
 }
