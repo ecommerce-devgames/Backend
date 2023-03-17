@@ -1,8 +1,12 @@
 const express = require("express");
-const db = require("./db");
-const routes = require("./routes");
+const volleyball = require("volleyball");
 const cookieParser = require("cookie-parser");
-var cors = require("cors");
+const cors = require("cors");
+require("dotenv").config();
+
+const db = require("./db");
+
+const routes = require("./routes");
 
 const {
   User,
@@ -12,17 +16,18 @@ const {
   Tag,
   Developer,
   Cart,
+  Review,
 } = require("./models");
 
-const PORT = 3001;
+const PORT = process.env.PORT;
 const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: "http://localhost:3000",
-  ///..other options
+  origin: process.env.CORS_ORIGIN,
 };
 
+server.use(volleyball);
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());

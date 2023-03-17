@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .messageBodyContainer {
+        
+                height: auto;
+                width: 75%;
+                margin: auto;
+                padding: 50px 0px;
+            }
+            .header {
+
+                height: auto;
+                width: 100%;
+                text-align: center;
+            }
+            .detailsBar {
+
+                height: 40px;
+                width: 100%;
+                margin: 50px 0px;
+                display: table;
+                table-layout: auto;
+                color: white;
+                background-color: rgb(31, 31, 31);
+            }
+            .detailsBar h5 {
+
+                height: auto;
+                width: 50%;
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .detailsBody {
+
+                height: auto;
+                width: 100%;
+                display: table;
+                table-layout: auto;
+            }
+            .detailsBody div {
+
+                height: auto;
+                width: 50%;
+                display: table-cell;
+                text-align: center;
+            }
+            hr {
+
+                height: auto;
+                width: 100%;
+                margin: 50px 0px;
+            }
+            .footer {
+
+                height: auto;
+                width: 100%;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="messageBodyContainer">
+                <div class="header">
+                    <h1>DevGames3</h1>
+                    <h4>Your DevGames3™Store purchase was completed successfully. Thank you!</h4>
+                    <p>Here's what you purchased:</p>
+                </div>
+                <div class="detailsBar">
+                    <h5>Games</h5>
+                    <h5>Total</h5>
+                </div>
+                <div class="detailsBody">
+                    <div>
+                        <p>{{games}}</p>
+                    </div>
+                    <div>
+                        <p>{{prices}}</p>
+                    </div>
+                </div>
+                <hr/>
+                <div class="footer">
+                    <h5>{{fullName}}</h5> 
+                    <h5>{{date}}</h5>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

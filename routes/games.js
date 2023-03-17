@@ -1,66 +1,40 @@
-const express = require ("express");
+const express = require("express");
 const { validateToken } = require("../middleware/validateToken");
-const { Game, User } = require ("../models");
+const {
+  getAllGames,
+  findGamesByCategory,
+  searchGameByName,
+  searchGameByTag,
+  getAGameById,
+  adminCreateAGame,
+  adminEditAGame,
+  adminDeleteAGame,
+  getGamesPagination,
+} = require("../controllers/games");
 
-const router = express.Router ();
+const router = express.Router();
 
-router.get ("/all", (req, res, next) => {
+router.get("/", getAllGames);
 
-    Game.findAll () 
+router.get("/pagination", getGamesPagination);
 
-        .then (games => res.send (games))
-        .catch (err => next (err));
-});
+// find games by category
+router.get("/category/:category", validateToken, findGamesByCategory);
 
-router.get ("/:id", (req, res, next) => {
+// search a  game by name
+router.get("/search", validateToken, searchGameByName);
 
-    Game.findByPk (req.params.id)
+// search by tag
 
-        .then (game => res.send (game))
-        .catch (err => next (err));
-});
+router.get("/tags/:tag", validateToken, searchGameByTag);
 
-router.post ("/admin/create", validateToken, (req, res, next) => {
+// get a game by ID
+router.get("/:id", getAGameById);
 
-    if (!req.user.isAdmin) return res.sendStatus (401);
+router.post("/admin/create", validateToken, adminCreateAGame);
 
-    const name = req.body.name.trim ()
+router.put("/admin/edit/:id", validateToken, adminEditAGame);
 
-    Game.findOrCreate ({
-        
-        where: { name }, 
-        defaults: { ...req.body }
-    })
+router.delete("/admin/delete/:id", validateToken, adminDeleteAGame);
 
-        .then (([game, created]) => {
-
-            if (created) return res.status (201).send (game);
-            res.sendStatus (403);
-        })
-        .catch (err => next (err));
-});
-
-router.put ("/admin/edit/:id", validateToken, (req, res, next) => {
-
-    if (!req.user.isAdmin) return res.sendStatus (401);
-    
-    Game.update (
-        
-        { ...req.body }, 
-        { where: { id: req.params.id }, returning: true, individualHooks: true }
-    )
-        .then (([affected, resulting]) => res.send (resulting))
-        .catch (err => next (err));
-});
-
-router.delete ("/admin/delete/:id", validateToken, (req, res, next) => {
-
-    if (!req.user.isAdmin) return res.sendStatus (401);
-
-    Game.destroy ({ where: { id: req.params.id }})
-
-        .then (() => res.sendStatus (204))
-        .catch (err => next (err));
-});
- 
-module.exports = router; 
+module.exports = router;

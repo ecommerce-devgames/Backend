@@ -52,7 +52,7 @@ User.init(
   },
   {
     sequelize: db,
-    modelName: "user"
+    modelName: "user",
   }
 );
 
@@ -61,7 +61,6 @@ User.addHook("beforeCreate", (user) => {
 
   return user
     .hash(user.password, user.salt)
-
     .then((hash) => (user.password = hash));
 });
 
@@ -71,7 +70,6 @@ User.addHook("beforeUpdate", (user) => {
 
     return user
       .hash(user.password, user.salt)
-
       .then((hash) => (user.password = hash));
   }
 });

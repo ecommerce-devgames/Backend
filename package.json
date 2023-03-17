@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "seed": "concurrently 'node seeds/seedUser.js' 'node seeds/seedAll.js'",
+    "relations": "node seeds/seedGames.js"
   },
   "keywords": [],
   "author": "",
@@ -14,10 +16,15 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "concurrently": "^7.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "handlebars": "^4.7.7",
     "jsonwebtoken": "^9.0.0",
+    "nodemailer": "^6.9.1",
     "pg": "^8.9.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.29.0",
