@@ -24,11 +24,10 @@ const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: process.env.CORS_ORIGIN,
+  origin: "*",
 };
 
 server.use(volleyball);
-server.options("*", cors());
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
