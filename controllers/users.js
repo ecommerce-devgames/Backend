@@ -33,7 +33,7 @@ const userLogin = async (req, res, next) => {
   try {
     user = await User.findOne({ where: { email } });
     validation = await user.validatePassword(password);
-    console.log(validation);
+    console.log("validation ==>>", validation);
     if (!validation) return res.sendStatus(401);
     payload = {
       id: user.id,
