@@ -28,6 +28,7 @@ const corsOptions = {
 };
 
 server.use(volleyball);
+server.options("*", cors());
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
