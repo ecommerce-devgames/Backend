@@ -24,7 +24,9 @@ const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: "*",
+  origin: "https://frontend-kohl-three-90.vercel.app/",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
 };
 
 server.use(volleyball);
