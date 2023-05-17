@@ -20,11 +20,12 @@ const {
 } = require("./models");
 
 const PORT = process.env.PORT;
+const ORIGIN = process.env.CORS_ORIGIN;
 const server = express();
 
 const corsOptions = {
   credentials: true,
-  origin: "https://frontend-kohl-three-90.vercel.app",
+  origin: ORIGIN,
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type,Authorization",
 };
