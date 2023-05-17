@@ -23,6 +23,7 @@ const PORT = process.env.PORT;
 const ORIGIN = process.env.CORS_ORIGIN;
 const server = express();
 
+console.log("ORIGIN ==>>", ORIGIN);
 const corsOptions = {
   credentials: true,
   origin: ORIGIN,
