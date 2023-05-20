@@ -18,8 +18,8 @@ const userRegister = async (req, res, next) => {
       library = await Library.create({
         owner: `${user.name} ${user.lastName}`,
       });
-      user.setCart(cart);
-      user.setLibrary(library);
+      cart.setCart(user);
+      library.setLibrary(user);
     }
   } catch (error) {
     return res.send(error).status(400);
